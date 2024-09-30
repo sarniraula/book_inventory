@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize';
-import { sequelize } from '../db';
+import { sequelize } from '../db.js';
 
 const Inventory = sequelize.define('Inventory', {
   title: {
@@ -20,6 +20,10 @@ const Inventory = sequelize.define('Inventory', {
     type: DataTypes.STRING,
     unique: true,
     allowNull: false,
+  },
+  quantity: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
   },
 });
 
