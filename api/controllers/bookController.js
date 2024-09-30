@@ -4,7 +4,11 @@ import Inventory from '../models/Inventory.js';
 export const getAllBooks = async (req, res) => {
   try {
     const items = await Inventory.findAll();
-    res.json(items);
+    if (items.length === 0) {
+      return res.status(404).json({ error: 'No items found' });
+    } else {
+      res.json(items);
+    }
   } catch (error) {
     console.error('Error fetching inventory:', error);
     res.status(500).json({ error: 'Failed to fetch inventory' });
@@ -66,9 +70,33 @@ export const deleteBook = async (req, res) => {
     }
 
     await item.destroy();
-    res.status(204).end();
+    res.status(204).json({ message: 'Item deleted successfully' });
   } catch (error) {
     console.error('Error deleting inventory item:', error);
     res.status(500).json({ error: 'Failed to delete inventory item' });
+  }
+};
+
+// Filter inventory by author, genre or title based on query parameters
+export const filterInventory = async (req, res) => {
+  const { author, genre, title } = req.query;
+
+  try {
+    const filterOptions = {};
+    if (author) filterOptions.author = author;
+    if (genre) filterOptions.genre = genre;
+    if (title) filterOptions.title = title;
+
+    const filteredItems = await Inventory.findAll({ where: filterOptions });
+
+    if (filteredItems.length === 0) {
+      return res.status(404).json({ error: 'No items found' });
+    } else {
+      res.json(filteredItems);
+    }
+
+  } catch (error) {
+    console.error('Error filtering inventory:', error);
+    res.status(500).json({ error: 'Failed to filter inventory' });
   }
 };
