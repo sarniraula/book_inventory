@@ -1,4 +1,7 @@
 import Inventory from '../models/Inventory.js';
+import pkg from 'json2csv';
+
+const { Parser } = pkg;
 
 // Get all Books
 export const getAllBooks = async (req, res) => {
@@ -98,5 +101,30 @@ export const filterInventory = async (req, res) => {
   } catch (error) {
     console.error('Error filtering inventory:', error);
     res.status(500).json({ error: 'Failed to filter inventory' });
+  }
+};
+
+//Controller to export book as CSV
+export const exportBooksAsCSV = async (req, res) => {
+  try {
+    const books = await Inventory.findAll();
+    const jsonBooks = books.map(book => book.toJSON());
+    const json2csvParser = new Parser();
+    const csv = json2csvParser.parse(jsonBooks);
+
+    res.header('Content-Type', 'text/csv');
+    res.attachment('books.csv');
+    res.send(csv);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const exportBooksAsJSON = async (req, res) => {
+  try {
+    const books = await Inventory.findAll();
+    res.status(200).json(books);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };
