@@ -34,6 +34,21 @@ export const getAllBooks = async (req, res) => {
   }
 };
 
+//Get the details of a book by ID
+export const getBookDetails = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const book = await Inventory.findByPk(id);
+    if (!book) {
+      return res.status(404).json({ error: 'Book not found' });
+    }
+    res.json(book);
+  } catch (error) {
+    console.error('Error fetching book details:', error);
+    res.status(500).json({ error: 'Failed to fetch book details' });
+  }
+};
 
 // Add a new Book
 export const addBook = async (req, res) => {

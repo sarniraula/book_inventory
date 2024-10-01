@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { exportToCSV, exportToJSON } from '../utils/exportHelpers';
+import BookCard from '../components/BookCard';
 
 const BooksListPage = () => {
   const [books, setBooks] = useState([]);
@@ -13,7 +14,7 @@ const BooksListPage = () => {
   const [filterValue, setFilterValue] = useState('');
   const [filterCriteria, setFilterCriteria] = useState('title'); // Default filter is by title
   const [filterActive, setFilterActive] = useState(false); // State to manage filter activation
-  const itemsPerPage = 6; // Number of books per page
+  const itemsPerPage = 9; // Number of books per page
   const navigate = useNavigate();
 
   // Fetch books from the API
@@ -130,36 +131,7 @@ const BooksListPage = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {books.map((book) => (
-          <div key={book.id} className="bg-white p-6 rounded-lg shadow-lg">
-            <h2
-              className="text-xl font-semibold text-primary mb-2 cursor-pointer hover:underline"
-              onClick={() => navigate(`/book/${book.id}`)} // Navigate to book details
-            >
-              {book.title}
-            </h2>
-            <p className="text-gray-600 mb-4">
-              <span className="font-medium">Author:</span> {book.author}
-            </p>
-
-            {/* Button Container */}
-            <div className="flex justify-between md:justify-end mt-4 md:mt-auto">
-              <button
-                className="bg-blue-500 text-white py-2 px-4 rounded-lg mb-2 md:mb-0"
-                onClick={() => navigate(`/update/${book.id}`)} // Navigate to update page
-              >
-                Update
-              </button>
-              <button
-                className="bg-red-500 text-white py-2 px-4 rounded-lg"
-                onClick={() => {
-                  setBookToDelete(book.id);
-                  setShowModal(true); // Show delete confirmation modal
-                }}
-              >
-                Delete
-              </button>
-            </div>
-          </div>
+          <BookCard key={book.id} book={book} />
         ))}
       </div>
 
@@ -198,7 +170,18 @@ const BooksListPage = () => {
           >
             Next
           </button>
+
+          <button
+            className={`bg-gray-300 text-gray-700 py-2 px-4 rounded-lg mx-2 ${
+              currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+            onClick={() => setFilterActive(true)}
+          >
+            Show All
+          </button>
         </div>
+        
+        
       )}
 
       {/* Delete Confirmation Modal */}
