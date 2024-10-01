@@ -170,6 +170,7 @@ const BooksListPage = () => {
             }`}
             onClick={() => {
               setItemsPerPage(totalBooks);
+              setFilterActive(true)
               setCurrentPage(1);
             }}
           >
