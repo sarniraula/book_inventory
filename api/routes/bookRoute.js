@@ -5,18 +5,16 @@ import {
     getAllBooks, 
     updateBook, 
     filterInventory, 
-    exportBooksAsCSV,
-    exportBooksAsJSON
+    bulkAddBooks
 } from '../controllers/bookController.js';
 
 const router = express.Router();
 
 router.get('/', getAllBooks);
 router.post('/', addBook);
+router.post('/add-many', bulkAddBooks); //For testing purpose (Frontend not implemented)
 router.put('/:id', updateBook);
 router.delete('/:id', deleteBook);
 router.get('/filter', filterInventory); 
-router.get('/export/csv', exportBooksAsCSV);
-router.get('/export/json', exportBooksAsJSON);
 
 export default router;

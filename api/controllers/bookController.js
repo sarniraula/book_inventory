@@ -1,8 +1,5 @@
 import Inventory from '../models/Inventory.js';
-import pkg from 'json2csv';
 import { Op } from 'sequelize'; // Import Sequelize operators
-
-const { Parser } = pkg;
 
 // Get all Books
 export const getAllBooks = async (req, res) => {
@@ -56,6 +53,26 @@ export const addBook = async (req, res) => {
   }
 };
 
+//API to add books in bulk Just for testing purpose (Frontend not implemented)
+export const bulkAddBooks = async (req, res) => {
+  const books = req.body; // Expecting an array of book objects
+
+  try {
+    // Validate the incoming data
+    if (!Array.isArray(books) || books.length === 0) {
+      return res.status(400).json({ error: 'Invalid book data provided.' });
+    }
+
+    // Bulk create books
+    const createdBooks = await Inventory.bulkCreate(books);
+    
+    res.status(201).json({ message: 'Books added successfully!', createdBooks });
+  } catch (error) {
+    console.error('Error adding books:', error);
+    res.status(500).json({ error: 'Failed to add books.' });
+  }
+};
+
 // Update Book by ID
 export const updateBook = async (req, res) => {
   try {
@@ -101,7 +118,6 @@ export const deleteBook = async (req, res) => {
 };
 
 // Filter inventory by author, genre or title based on query parameters
-
 export const filterInventory = async (req, res) => {
   const { author, genre, title } = req.query;
 
@@ -125,31 +141,5 @@ export const filterInventory = async (req, res) => {
   } catch (error) {
     console.error('Error filtering inventory:', error);
     res.status(500).json({ error: 'Failed to filter inventory' });
-  }
-};
-
-
-//Controller to export book as CSV
-export const exportBooksAsCSV = async (req, res) => {
-  try {
-    const books = await Inventory.findAll();
-    const jsonBooks = books.map(book => book.toJSON());
-    const json2csvParser = new Parser();
-    const csv = json2csvParser.parse(jsonBooks);
-
-    res.header('Content-Type', 'text/csv');
-    res.attachment('books.csv');
-    res.send(csv);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-export const exportBooksAsJSON = async (req, res) => {
-  try {
-    const books = await Inventory.findAll();
-    res.status(200).json(books);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
   }
 };
