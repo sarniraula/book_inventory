@@ -2,7 +2,9 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import Home from './pages/Home';
+import HomePage from './pages/HomePage';
+import AddBookPage from './pages/AddBookPage';
+import BooksListPage from './pages/BooksListPage';
 
 const App = () => {
   return (
@@ -10,7 +12,9 @@ const App = () => {
       <Navbar />
       <div className="min-h-screen bg-light">
         <Routes>
-          <Route path='/' element={<Home />} />
+          <Route path='/' element={<HomePage />} />
+          <Route path='/add-book' element={<AddBookPage />} />
+          <Route path='/books' element={<BooksListPage />} />
         </Routes>
       </div>
       <Footer />

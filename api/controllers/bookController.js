@@ -1,22 +1,42 @@
 import Inventory from '../models/Inventory.js';
 import pkg from 'json2csv';
+import { Op } from 'sequelize'; // Import Sequelize operators
 
 const { Parser } = pkg;
 
 // Get all Books
 export const getAllBooks = async (req, res) => {
   try {
-    const items = await Inventory.findAll();
-    if (items.length === 0) {
-      return res.status(404).json({ error: 'No items found' });
-    } else {
-      res.json(items);
+    const { page = 1, limit = 10 } = req.query; // Default: 10 items per page
+    const offset = (page - 1) * limit;
+
+    // Count the total number of books
+    const totalBooks = await Inventory.count();
+
+    // Fetch the books with pagination
+    const books = await Inventory.findAll({
+      limit: parseInt(limit),
+      offset: parseInt(offset),
+      order: [['title', 'ASC']] // Order by Alphabetical order
+    });
+
+    if (books.length === 0) {
+      return res.status(404).json({ error: 'No books found' });
     }
+
+    // Send back the paginated data and total book count
+    res.json({
+      books,
+      totalBooks,
+      currentPage: parseInt(page),
+      totalPages: Math.ceil(totalBooks / limit),
+    });
   } catch (error) {
-    console.error('Error fetching inventory:', error);
-    res.status(500).json({ error: 'Failed to fetch inventory' });
+    console.error('Error fetching books:', error);
+    res.status(500).json({ error: 'Failed to fetch books' });
   }
 };
+
 
 // Add a new Book
 export const addBook = async (req, res) => {
@@ -81,21 +101,25 @@ export const deleteBook = async (req, res) => {
 };
 
 // Filter inventory by author, genre or title based on query parameters
+
 export const filterInventory = async (req, res) => {
   const { author, genre, title } = req.query;
 
   try {
     const filterOptions = {};
-    if (author) filterOptions.author = author;
-    if (genre) filterOptions.genre = genre;
-    if (title) filterOptions.title = title;
 
-    const filteredItems = await Inventory.findAll({ where: filterOptions });
+    // Apply case-insensitive, partial matching filters
+    if (author) filterOptions.author = { [Op.iLike]: `%${author}%` };
+    if (genre) filterOptions.genre = { [Op.iLike]: `%${genre}%` };
+    if (title) filterOptions.title = { [Op.iLike]: `%${title}%` };
 
-    if (filteredItems.length === 0) {
+    // Find all books matching the filter options
+    const books = await Inventory.findAll({ where: filterOptions });
+
+    if (books.length === 0) {
       return res.status(404).json({ error: 'No items found' });
     } else {
-      res.json(filteredItems);
+      res.json({ books });
     }
 
   } catch (error) {
@@ -103,6 +127,7 @@ export const filterInventory = async (req, res) => {
     res.status(500).json({ error: 'Failed to filter inventory' });
   }
 };
+
 
 //Controller to export book as CSV
 export const exportBooksAsCSV = async (req, res) => {
