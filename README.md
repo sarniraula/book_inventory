@@ -20,7 +20,6 @@ This project was developed as part of a learning project and an assignment for a
 - **CRUD Operations**: Add, edit, delete books.
 - **Filtering**: Filter books by title, author, or genre with case-insensitive partial matching.
 - **Export**: Export books as CSV or JSON.
-- **Import**: Import books into the system via CSV or JSON.
 - **Responsive UI**: The app is fully responsive with a clean UI using Tailwind CSS.
 - **Pagination**: Browse through a large number of books efficiently.
   
