@@ -8,14 +8,13 @@ const BooksListPage = () => {
   const [books, setBooks] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalBooks, setTotalBooks] = useState(0);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [bookToDelete, setBookToDelete] = useState(null);
   const [filterValue, setFilterValue] = useState('');
   const [filterCriteria, setFilterCriteria] = useState('title'); // Default filter is by title
   const [filterActive, setFilterActive] = useState(false); // State to manage filter activation
-  const itemsPerPage = 9; // Number of books per page
-  const navigate = useNavigate();
+  const [itemsPerPage, setItemsPerPage] = useState(9); // Number of books per page
 
   // Fetch books from the API
   useEffect(() => {
@@ -24,7 +23,6 @@ const BooksListPage = () => {
       try {
         let response;
         if (filterActive) {
-            console.log(`http://localhost:3000/api/books/filter?${filterCriteria}=${filterValue}`)
           response = await axios.get(
             `http://localhost:3000/api/books/filter?${filterCriteria}=${filterValue}`
           );
@@ -36,6 +34,7 @@ const BooksListPage = () => {
         setBooks(response.data.books); // Set books data
         if (!filterActive) {
           setTotalPages(Math.ceil(response.data.totalBooks / itemsPerPage));
+          setTotalBooks(response.data.totalBooks);
         }
         setLoading(false);
       } catch (error) {
@@ -46,18 +45,6 @@ const BooksListPage = () => {
 
     fetchBooks();
   }, [currentPage, filterActive, filterValue, filterCriteria]);
-
-  // Handle Delete
-  const handleDelete = async () => {
-    try {
-      await axios.delete(`http://localhost:3000/api/books/${bookToDelete}`);
-      setBooks(books.filter((book) => book.id !== bookToDelete)); // Remove deleted book
-      setShowModal(false);
-      setBookToDelete(null);
-    } catch (error) {
-      console.error('Error deleting book:', error);
-    }
-  };
 
   //This function is used to remove the book from the list once it is deleted from child component (BookCard)
   const removeBookFromList = (bookId) => {
@@ -181,7 +168,10 @@ const BooksListPage = () => {
             className={`bg-gray-300 text-gray-700 py-2 px-4 rounded-lg mx-2 ${
               currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''
             }`}
-            onClick={() => setFilterActive(true)}
+            onClick={() => {
+              setItemsPerPage(totalBooks);
+              setCurrentPage(1);
+            }}
           >
             Show All
           </button>
