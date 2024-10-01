@@ -59,6 +59,11 @@ const BooksListPage = () => {
     }
   };
 
+  //This function is used to remove the book from the list once it is deleted from child component (BookCard)
+  const removeBookFromList = (bookId) => {
+    setBooks(books.filter((book) => book.id !== bookId));
+  };
+
   // Handle Filter
   const handleFilter = () => {
     setFilterActive(true); // Enable filter mode
@@ -129,9 +134,10 @@ const BooksListPage = () => {
         </div>
       </div>
 
+      {/* Main Books Component */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {books.map((book) => (
-          <BookCard key={book.id} book={book} />
+          <BookCard key={book.id} book={book} removeBook={removeBookFromList}/>
         ))}
       </div>
 

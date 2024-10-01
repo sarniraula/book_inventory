@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useNavigate, useParams } from "react-router-dom";
 import { FaBook, FaCalendarAlt, FaUser, FaList, FaBarcode, FaBox, FaCheck, FaTimes } from 'react-icons/fa'; // React icons
 
+import { isValidISBN } from '../validators/bookValidators';
+
 const BookFormPage = ({ isUpdate }) => {
   const { bookId } = useParams(); // Get book ID for update case
   const navigate = useNavigate();
@@ -33,6 +35,13 @@ const BookFormPage = ({ isUpdate }) => {
     // Basic validation
     if (!title || !author || !genre || !publicationDate || !isbn || quantity <= 0) {
       setError('All fields are required and quantity must be greater than zero.');
+      setSuccess('');
+      return;
+    }
+
+    // Validate ISBN
+    if (!isValidISBN(isbn)) {
+      setError('Invalid ISBN. Please enter a valid ISBN.');
       setSuccess('');
       return;
     }
@@ -78,7 +87,7 @@ const BookFormPage = ({ isUpdate }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Title */}
             <div>
-              <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
+              <label htmlFor="title" className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
                 <FaBook /> Title
               </label>
               <input
@@ -93,7 +102,7 @@ const BookFormPage = ({ isUpdate }) => {
             </div>
             {/* Author */}
             <div>
-              <label htmlFor="author" className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
+              <label htmlFor="author" className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
                 <FaUser /> Author
               </label>
               <input
@@ -108,7 +117,7 @@ const BookFormPage = ({ isUpdate }) => {
             </div>
             {/* Genre */}
             <div>
-              <label htmlFor="genre" className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
+              <label htmlFor="genre" className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
                 <FaList /> Genre
               </label>
               <input
@@ -123,7 +132,7 @@ const BookFormPage = ({ isUpdate }) => {
             </div>
             {/* Publication Date */}
             <div>
-              <label htmlFor="publicationDate" className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
+              <label htmlFor="publicationDate" className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
                 <FaCalendarAlt /> Publication Date
               </label>
               <input
@@ -137,7 +146,7 @@ const BookFormPage = ({ isUpdate }) => {
             </div>
             {/* ISBN */}
             <div>
-              <label htmlFor="isbn" className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
+              <label htmlFor="isbn" className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
                 <FaBarcode /> ISBN
               </label>
               <input
@@ -152,7 +161,7 @@ const BookFormPage = ({ isUpdate }) => {
             </div>
             {/* Quantity */}
             <div>
-              <label htmlFor="quantity" className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
+              <label htmlFor="quantity" className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-1">
                 <FaBox /> Quantity
               </label>
               <input

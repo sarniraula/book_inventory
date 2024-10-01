@@ -46,11 +46,12 @@ const BookDetails = () => {
           </p>
         </div>
 
-        <div className="mt-6 text-gray-600 text-justify">
+        {/* Not Implemented yet */}
+        {/* <div className="mt-6 text-gray-600 text-justify">
           <p>
             {book.description}
           </p>
-        </div>
+        </div> */}
       </div>
     </div>
   );
