@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { exportToCSV, exportToJSON } from '../utils/exportHelpers';
 
 const BooksListPage = () => {
   const [books, setBooks] = useState([]);
@@ -107,6 +108,23 @@ const BooksListPage = () => {
               Clear Filter
             </button>
           )}
+        </div>
+
+        <div>
+            <div className="flex justify-center mt-8">
+                <button
+                    className="bg-green-500 text-white py-2 px-4 rounded-lg mx-2"
+                    onClick={() => exportToCSV(books)}
+                >
+                    Export to CSV
+                </button>
+                <button
+                    className="bg-green-500 text-white py-2 px-4 rounded-lg mx-2"
+                    onClick={() => exportToJSON(books)}
+                >
+                    Export to JSON
+                </button>
+            </div>
         </div>
       </div>
 
